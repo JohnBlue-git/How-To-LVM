@@ -15,5 +15,5 @@ cat ./backup.tar.gz | ssh mis@"$RMIP" "cd / && sudo -S tar -xpzvf -"
 rm backup.tar.gz
 ```
 Note:
-Standalone '-': means "write the tarball to stdout" instead of a local file.
-Command 'sudo -S': to read the password from stdin.
+- Standalone '-': means "write the tarball to stdout" instead of a local file.
+- Command 'sudo -S': to read the password from stdin.
