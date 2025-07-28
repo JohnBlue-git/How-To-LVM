@@ -1,4 +1,4 @@
 Outline
 - [LVM Introduction](./LVM_INTORDUCTION.md)
-- [Check LVM](./LVM_CHECKING.md)
-- [Setting LVM](./LVM_SETTING.md)
+- [Checking LVM Settings](./LVM_CHECKING.md)
+- [Establishing LVM](./LVM_ESTABLISHING.md)
