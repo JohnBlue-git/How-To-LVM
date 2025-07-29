@@ -24,8 +24,10 @@ Set Partition Type to 8e
 ```bash
 $ sudo fdisk /dev/nvme1n1
 n  # Create new partition
+e  # Choose partition type, extended (container for logical partitions)
+... keep enter for default setting ...
 t  # Change partition type
-8e # Set to LVM format
+8e # Set to LVM format (8e is Hex code)
 w  # Write changes
 ```
 
