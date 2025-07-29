@@ -31,6 +31,43 @@ t  # Change partition type
 w  # Write changes
 ```
 
+錯誤: 分割區的 7814035120 磁區長度超出 4294967295 的 msdos-partition-table-imposed 最大值。表示你目前的磁碟使用的是 MS-DOS (MBR) 分割表格式，而這種格式的最大容量限制是 2TB（或最多支援到 4TB，但實際上常常會遇到限制），這就是為什麼你無法把 nvme1n1p1 擴展到整個 3.6TB 磁碟的原因。
+\
+轉換為 GPT 分割表格式要使用整個 3.6TB 的磁碟空間，你需要將磁碟的分割表從 MBR (msdos) 轉換為 GPT (GUID Partition Table)。這會清除整個磁碟上的所有資料，所以請務必先備份重要資料！
+```bash
+# Check "Partition Table: msdos" for MBR or "gpt" for GPT
+sudo parted /dev/nvme1n1 print
+
+# Clear the MBR partition table
+sudo wipefs -a /dev/nvme1n1
+
+# Use parted to create a GPT partition table
+sudo parted /dev/nvme1n1
+# inside ...
+mklabel gpt
+quit
+# Alternatively, use gdisk
+sudo gdisk /dev/nvme1n1
+# inside ...
+o # to create a new GPT partition table.
+y # Confirm with y.
+w # to write changes and exit.
+
+# Create a new partition on /dev/nvme1n1 for use with LVM
+sudo parted /dev/nvme1n1
+# insyde ...
+mkpart primary 0% 100%
+set 1 lvm on
+quit
+# Alternatively, use fdisk
+sudo fdisk /dev/nvme1n1
+g # to create a new GPT partition table (if not already done).
+n # to create a new partition, select defaults for a single partition.
+t # to set the partition type to 8e00 (LVM).
+w # to write changes.
+```
+
+
 Create Physical Volumes
 ```bash
 $ sudo pvcreate /dev/nvme1n1p1
@@ -84,6 +121,6 @@ If adding a new disk (e.g., nvme2n1)
 ```bash
 sudo pvcreate /dev/nvme2n1
 sudo vgextend home_vg /dev/nvme2n1
-sudo lvresize -L +3T /dev/mapper/home_vg-home_lv
+sudo lvextend -l +100%FREE /dev/mapper/home_vg-home_lv # sudo lvresize -L +3T /dev/mapper/home_vg-home_lv
 sudo resize2fs /dev/mapper/home_vg-home_lv
 ```
