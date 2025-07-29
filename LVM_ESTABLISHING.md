@@ -22,7 +22,7 @@ sudo umount /home
 
 Set Partition Type to 8e
 ```bash
-$ fdisk /dev/nvme1n1
+$ sudo fdisk /dev/nvme1n1
 n  # Create new partition
 t  # Change partition type
 8e # Set to LVM format
